@@ -73,13 +73,8 @@ class MainWindow:
                     if self.on_quit:
                         self.on_quit()
 
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.running = False
-                        if self.on_quit:
-                            self.on_quit()
-
-                # Pass events to current screen
+                # Pass events to current screen (including ESC)
+                # Let screens handle their own ESC behavior
                 if self.current_screen and hasattr(self.current_screen, 'handle_event'):
                     self.current_screen.handle_event(event)
 

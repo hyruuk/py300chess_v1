@@ -37,6 +37,9 @@ class ChessBoardRenderer:
         self.origin_square = None
         self.legal_move_squares = set()
 
+        # Board orientation
+        self.flipped = False  # If True, display from Black's perspective
+
         # Font for coordinate labels
         self.font = pygame.font.Font(None, 20)
 
@@ -56,7 +59,13 @@ class ChessBoardRenderer:
         # Draw squares
         for row in range(8):
             for col in range(8):
-                square = chess.square(col, 7 - row)  # Flip vertically for display
+                # Calculate square index based on board orientation
+                if self.flipped:
+                    # Black's perspective: row 0 = rank 1, row 7 = rank 8
+                    square = chess.square(7 - col, row)
+                else:
+                    # White's perspective: row 0 = rank 8, row 7 = rank 1
+                    square = chess.square(col, 7 - row)
 
                 # Determine base color
                 is_light = (row + col) % 2 == 0
@@ -97,7 +106,12 @@ class ChessBoardRenderer:
         # Draw visual markers for selected and legal move squares
         for row in range(8):
             for col in range(8):
-                square = chess.square(col, 7 - row)
+                # Calculate square index based on board orientation
+                if self.flipped:
+                    square = chess.square(7 - col, row)
+                else:
+                    square = chess.square(col, 7 - row)
+
                 rect = pygame.Rect(
                     self.position[0] + col * self.square_size,
                     self.position[1] + row * self.square_size,
@@ -280,7 +294,11 @@ class ChessBoardRenderer:
         """Draw rank and file labels."""
         # Files (a-h)
         for col in range(8):
-            file_letter = chr(ord('a') + col)
+            if self.flipped:
+                file_letter = chr(ord('h') - col)  # h to a when flipped
+            else:
+                file_letter = chr(ord('a') + col)  # a to h normally
+
             text = self.font.render(file_letter, True, (180, 180, 180))
             text_rect = text.get_rect(
                 centerx=self.position[0] + col * self.square_size + self.square_size // 2,
@@ -290,7 +308,11 @@ class ChessBoardRenderer:
 
         # Ranks (1-8)
         for row in range(8):
-            rank_number = str(8 - row)
+            if self.flipped:
+                rank_number = str(row + 1)  # 1 to 8 when flipped
+            else:
+                rank_number = str(8 - row)  # 8 to 1 normally
+
             text = self.font.render(rank_number, True, (180, 180, 180))
             text_rect = text.get_rect(
                 x=self.position[0] - 20,

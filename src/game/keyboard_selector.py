@@ -22,6 +22,9 @@ class KeyboardMoveSelector:
         self.available_moves = []
         self.current_move_index = 0
 
+        # Board orientation (set externally based on player color)
+        self.board_flipped = False
+
     def move_cursor(self, direction: str):
         """
         Move cursor in a direction.
@@ -33,15 +36,36 @@ class KeyboardMoveSelector:
         file = chess.square_file(self.cursor_square)
         rank = chess.square_rank(self.cursor_square)
 
-        # Update based on direction
-        if direction == 'up' and rank < 7:
-            rank += 1
-        elif direction == 'down' and rank > 0:
-            rank -= 1
-        elif direction == 'right' and file < 7:
-            file += 1
-        elif direction == 'left' and file > 0:
-            file -= 1
+        # Adjust direction based on board orientation
+        # When board is flipped (Black's perspective), all directions are visually inverted
+        if self.board_flipped:
+            # Invert all directions for flipped board
+            if direction == 'up':
+                # Visual up = rank decreases when flipped
+                if rank > 0:
+                    rank -= 1
+            elif direction == 'down':
+                # Visual down = rank increases when flipped
+                if rank < 7:
+                    rank += 1
+            elif direction == 'left':
+                # Visual left = file increases when flipped
+                if file < 7:
+                    file += 1
+            elif direction == 'right':
+                # Visual right = file decreases when flipped
+                if file > 0:
+                    file -= 1
+        else:
+            # Normal orientation (White's perspective)
+            if direction == 'up' and rank < 7:
+                rank += 1
+            elif direction == 'down' and rank > 0:
+                rank -= 1
+            elif direction == 'right' and file < 7:
+                file += 1
+            elif direction == 'left' and file > 0:
+                file -= 1
 
         # Update cursor square
         self.cursor_square = chess.square(file, rank)

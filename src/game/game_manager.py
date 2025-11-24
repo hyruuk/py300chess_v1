@@ -11,6 +11,8 @@ class ChessGameManager:
         """Initialize chess game."""
         self.board = chess.Board()
         self.move_history = []
+        self.is_forfeited = False
+        self.forfeited_by = None  # Color that forfeited (chess.WHITE or chess.BLACK)
 
     def get_legal_moves(self) -> List[chess.Move]:
         """Get all legal moves in current position."""
@@ -96,7 +98,7 @@ class ChessGameManager:
 
     def is_game_over(self) -> bool:
         """Check if game is over."""
-        return self.board.is_game_over()
+        return self.board.is_game_over() or self.is_forfeited
 
     def get_result(self) -> Optional[str]:
         """
@@ -105,6 +107,9 @@ class ChessGameManager:
         Returns:
             Result string ('1-0', '0-1', '1/2-1/2') or None
         """
+        if self.is_forfeited:
+            # If white forfeited, black wins (0-1), otherwise white wins (1-0)
+            return '0-1' if self.forfeited_by == chess.WHITE else '1-0'
         if self.is_game_over():
             return self.board.result()
         return None
@@ -154,6 +159,8 @@ class ChessGameManager:
         """Reset to starting position."""
         self.board.reset()
         self.move_history = []
+        self.is_forfeited = False
+        self.forfeited_by = None
 
     def get_piece_at(self, square: int) -> Optional[chess.Piece]:
         """
