@@ -1,0 +1,24 @@
+# Core EEG and Signal Processing
+pylsl>=1.16.0
+numpy>=1.24.0
+scipy>=1.10.0
+mne>=1.5.0
+
+# Machine Learning
+scikit-learn>=1.3.0
+pyriemann>=0.5.0
+
+# Chess
+python-chess>=1.999
+stockfish>=3.28.0
+
+# GUI
+pygame>=2.5.0
+
+# Data Management
+pandas>=2.0.0
+h5py>=3.9.0
+PyYAML>=6.0
+
+# Optional: Better stimulus timing
+# psychopy>=2023.2.0

@@ -1,0 +1,61 @@
+# P300 Chess BCI Configuration
+
+# EEG Acquisition
+eeg:
+  stream_name: "EEG"  # LSL stream name to connect to
+  sampling_rate: 250  # Expected sampling rate (Hz)
+  channels: ['Fz', 'Cz', 'Pz', 'Oz', 'P3', 'P4', 'C3', 'C4']  # Target channels
+  buffer_length: 10  # Seconds of data to buffer
+
+# Signal Processing
+processing:
+  bandpass_low: 0.1  # Hz
+  bandpass_high: 20  # Hz
+  notch_freq: 50  # Hz (60 for North America)
+  epoch_tmin: -0.2  # Seconds before stimulus
+  epoch_tmax: 0.8  # Seconds after stimulus
+  baseline: [-0.2, 0]  # Baseline correction window
+
+# P300 Detection
+p300:
+  target_channels: ['Pz', 'Cz', 'P3', 'P4']  # Primary P300 channels
+  classifier: "xDAWN_LDA"  # Options: LDA, xDAWN_LDA, Riemannian, ensemble
+  n_xdawn_components: 4
+  cross_validation_folds: 5
+
+# Calibration
+calibration:
+  n_trials_per_stimulus: 15  # Number of repetitions per target
+  n_nontarget_per_target: 5  # Non-target stimuli per target
+  flash_duration: 0.1  # Seconds
+  isi: 0.3  # Inter-stimulus interval (seconds)
+  feedback_enabled: true
+
+# Chess Game
+chess:
+  flash_duration: 0.15  # Seconds
+  isi: 0.25  # Inter-stimulus interval
+  n_repetitions: 5  # Flash cycles per selection
+  engine: "stockfish"
+  engine_skill_level: 5  # 0-20 for Stockfish
+  engine_depth: 10  # Search depth
+  move_confirmation: true  # Require confirmation before executing
+
+# Demo/Testing Mode
+demo:
+  enabled: true  # Enable keyboard control mode (no EEG required)
+  keyboard_control: true  # Use arrow keys and spacebar for move selection
+  auto_play_engine: true  # Engine automatically plays opponent moves
+  show_legal_moves: true  # Highlight legal moves for selected piece
+
+# GUI
+gui:
+  screen_width: 1920
+  screen_height: 1080
+  fullscreen: false  # Set to false for easier testing
+  background_color: [40, 40, 40]
+  flash_color: [255, 255, 100]
+  board_size: 640  # Pixels
+  font_size: 24
+  selected_square_color: [130, 151, 105]  # Color for keyboard-selected square
+  legal_move_color: [186, 202, 68]  # Color for legal move highlights

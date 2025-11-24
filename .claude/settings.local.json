@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(python tests/test_basic.py:*)",
+      "Bash(find:*)",
+      "Bash(python tests/test_imports.py:*)",
+      "Bash(python tests/test_syntax.py:*)",
+      "Bash(python src/main.py:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
