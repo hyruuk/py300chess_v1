@@ -76,15 +76,23 @@ class DataBuffer:
         start_time = event_timestamp + tmin
         end_time = event_timestamp + tmax
 
-        # Get circular buffer indices
+        # Get valid data from circular buffer
         if self.samples_written < self.buffer_size:
-            # Buffer not yet full
+            # Buffer not yet full - data is contiguous from 0 to write_index
             valid_timestamps = self.timestamps[:self.write_index]
             valid_data = self.data[:self.write_index]
         else:
-            # Buffer is full, need to handle wraparound
-            valid_timestamps = self.timestamps
-            valid_data = self.data
+            # Buffer has wrapped - need to unwrap it to get chronological order
+            # Most recent data is at [write_index : buffer_size] + [0 : write_index]
+            # Oldest to newest: [write_index : buffer_size] then [0 : write_index]
+            valid_timestamps = np.concatenate([
+                self.timestamps[self.write_index:],
+                self.timestamps[:self.write_index]
+            ])
+            valid_data = np.vstack([
+                self.data[self.write_index:],
+                self.data[:self.write_index]
+            ])
 
         # Find samples in time window
         mask = (valid_timestamps >= start_time) & (valid_timestamps <= end_time)
@@ -92,6 +100,14 @@ class DataBuffer:
 
         if len(epoch_data) == 0:
             return None
+
+        # Debug: check if epoch is unexpectedly short
+        expected_samples = int((tmax - tmin) * 250)  # Assuming 250Hz
+        if len(epoch_data) < expected_samples * 0.8:  # Less than 80% of expected
+            print(f"WARNING: Short epoch extracted - got {len(epoch_data)} samples, expected ~{expected_samples}")
+            print(f"  Time window: [{start_time:.3f}, {end_time:.3f}] (duration: {end_time-start_time:.3f}s)")
+            print(f"  Buffer range: [{valid_timestamps.min():.3f}, {valid_timestamps.max():.3f}]")
+            print(f"  Samples in window: {np.sum(mask)}")
 
         return epoch_data
 

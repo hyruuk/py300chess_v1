@@ -21,19 +21,30 @@ class P300MoveSelector:
         self.isi = isi
         self.n_repetitions = n_repetitions
 
-    def create_flash_sequence(self, selection_mode: str = 'square') -> List[Dict]:
+    def create_flash_sequence(self, selection_mode: str = 'square',
+                              legal_squares: Optional[List[int]] = None) -> List[Dict]:
         """
         Create row/column flash sequence for board squares.
 
         Args:
             selection_mode: 'square' for selecting a square, 'piece' for piece selection
+            legal_squares: Optional list of legal square indices to limit flashing
 
         Returns:
             List of flash events with metadata
         """
-        # Create groups for rows (0-7, or 1-8 in chess notation) and columns (0-7, or a-h)
-        rows = list(range(8))
-        cols = list(range(8))
+        # If legal_squares provided, only flash rows/cols containing those squares
+        if legal_squares is not None and len(legal_squares) > 0:
+            legal_rows = set(chess.square_rank(sq) for sq in legal_squares)
+            legal_cols = set(chess.square_file(sq) for sq in legal_squares)
+            rows = sorted(list(legal_rows))
+            cols = sorted(list(legal_cols))
+            print(f"Flashing {len(rows)} rows (ranks {[r+1 for r in rows]}) and "
+                  f"{len(cols)} columns (files {[chr(ord('a')+c) for c in cols]})")
+        else:
+            # Flash all rows and columns
+            rows = list(range(8))
+            cols = list(range(8))
 
         flash_sequence = []
 

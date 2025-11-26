@@ -3,6 +3,7 @@ Controls the timing and presentation of visual flashes.
 """
 
 import time
+import pylsl
 from typing import Callable, List, Optional, Dict, Tuple
 
 
@@ -98,8 +99,10 @@ class FlashController:
 
         if self.on_flash_start:
             flash_info = self.flash_sequence[self.current_flash_index]
+            # Use LSL timestamp for synchronization with EEG data
+            lsl_timestamp = pylsl.local_clock()
             self.on_flash_start(self.current_flash_index, flash_info,
-                              self.flash_start_time)
+                              lsl_timestamp)
 
     def _end_flash(self):
         """End current flash."""
@@ -109,7 +112,9 @@ class FlashController:
 
         if self.on_flash_end:
             flash_info = self.flash_sequence[self.current_flash_index]
-            self.on_flash_end(self.current_flash_index, flash_info, end_time)
+            # Use LSL timestamp for synchronization with EEG data
+            lsl_timestamp = pylsl.local_clock()
+            self.on_flash_end(self.current_flash_index, flash_info, lsl_timestamp)
 
     def _complete_sequence(self):
         """Complete the flash sequence."""

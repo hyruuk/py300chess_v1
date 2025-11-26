@@ -2,7 +2,9 @@
 
 # EEG Acquisition
 eeg:
+  use_simulated: true  # Use simulated EEG stream (true) or real LSL stream (false)
   stream_name: "EEG"  # LSL stream name to connect to
+  simulated_stream_name: "SimulatedEEG"  # Name for simulated stream
   sampling_rate: 250  # Expected sampling rate (Hz)
   channels: ['Fz', 'Cz', 'Pz', 'Oz', 'P3', 'P4', 'C3', 'C4']  # Target channels
   buffer_length: 10  # Seconds of data to buffer
@@ -25,16 +27,16 @@ p300:
 
 # Calibration
 calibration:
-  n_trials_per_stimulus: 15  # Number of repetitions per target
+  n_trials_per_stimulus: 5  # Number of repetitions per target (reduced for faster calibration)
   n_nontarget_per_target: 5  # Non-target stimuli per target
   flash_duration: 0.1  # Seconds
-  isi: 0.3  # Inter-stimulus interval (seconds)
+  isi: 0.2  # Inter-stimulus interval (seconds)
   feedback_enabled: true
 
 # Chess Game
 chess:
-  flash_duration: 0.15  # Seconds
-  isi: 0.25  # Inter-stimulus interval
+  flash_duration: 0.1  # Seconds
+  isi: 0.2  # Inter-stimulus interval
   n_repetitions: 5  # Flash cycles per selection
   engine: "stockfish"
   engine_skill_level: 5  # 0-20 for Stockfish
